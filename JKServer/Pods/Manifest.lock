@@ -1,0 +1,16 @@
+PODS:
+  - ProtocolBuffers-Swift (4.0.6)
+
+DEPENDENCIES:
+  - ProtocolBuffers-Swift
+
+SPEC REPOS:
+  trunk:
+    - ProtocolBuffers-Swift
+
+SPEC CHECKSUMS:
+  ProtocolBuffers-Swift: 09b5cfcc641ab512d6aaa1d2cc3879a40432052c
+
+PODFILE CHECKSUM: 3500b690de80f0bbba1661052d86e43b7cb031a5
+
+COCOAPODS: 1.8.4
