@@ -70,12 +70,13 @@ extension JKSocket {
     
     // MARK:- 客户端 接收消息
     /// 接收消息
-    func receiveMessage() {
+    fileprivate func receiveMessage() {
         DispatchQueue.global().async {
             while true {
                 guard let lMsg = self.tcpClient.read(4) else {
                     // 读取不到就进入下一个循环
-                    print("------与服务器断开了连接------")
+                    // print("------与服务器断开了连接------")
+                    // self.tcpClient.close()
                     continue
                 }
                 // 1.读取长度的data
@@ -107,7 +108,7 @@ extension JKSocket {
     /// - Parameters:
     ///   - type: 消息的类型
     ///   - data: 消息的数据
-    func handleMessage(type: Int, data: Data) {
+    fileprivate func handleMessage(type: Int, data: Data) {
         switch type {
         case 0:
             let userInfo = try! UserInfo.parseFrom(data: data)
@@ -172,10 +173,11 @@ extension JKSocket {
         let textMessage = ChatMessage.Builder()
         // textMessage.user = userInfo
         textMessage.text = message
+        textMessage.user = try! userInfo.build()
         // 2.获取我们响应的data
         let chatData = (try! textMessage.build()).data()
         // 3.发送消息到服务器
-        sendMessage(data: chatData, type: 1)
+        sendMessage(data: chatData, type: 2)
     }
     // MARK: 发送礼物消息
     /// 发送礼物消息
@@ -186,16 +188,27 @@ extension JKSocket {
         giftMessage.giftname = giftName
         giftMessage.giftUrl = giftURL
         giftMessage.giftcount = Int32(giftCount)
+        giftMessage.user = try! userInfo.build()
         // 2.获取我们礼物的data
         let giftData = (try! giftMessage.build()).data()
         // 3.发送消息到服务器
-        sendMessage(data: giftData, type: 2)
+        sendMessage(data: giftData, type: 3)
+    }
+    
+    // MARK:- 发送心跳包
+    /// 发送心跳包
+    func sendHeartBeat() {
+        // 1.获取消息
+        let hearBeatContent = "我是心跳包"
+        let msgData = hearBeatContent.data(using: .utf8)!
+        // 发送心跳包
+        sendMessage(data: msgData, type: 100)
     }
     
     // MARK: 客户端 发送消息
     /// 发送消息
     /// - Parameter data: 消息数据
-    func sendMessage(data: Data, type: Int) {
+    fileprivate func sendMessage(data: Data, type: Int) {
         // 1、获取消息的长度
         var mesLength = data.count
         // 2、将消息长度，写入到

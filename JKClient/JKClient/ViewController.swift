@@ -8,8 +8,16 @@
 
 import UIKit
 import ProtocolBuffers
+/*
+  1> 获取到服务器对应的IP/端口号
+  2> 使用Socket, 通过IP/端口号和服务器建立连接
+  3> 开启定时器, 实时让服务器发送心跳包
+  4> 通过sendMsg, 给服务器发送消息: 字节流 --> headerData(消息的长度) + typeData(消息的类型) + MsgData(真正的消息)
+  5> 读取从服务器传送过来的消息(开启子线程)
+*/
 class ViewController: UIViewController {
 
+    fileprivate var timer: Timer!
     lazy var socket: JKSocket = JKSocket(addr: "192.168.3.44", port: 8181)
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,7 +28,14 @@ class ViewController: UIViewController {
         view.addSubview(leaveRoomBtn)
         view.addSubview(sendMessageBtn)
         view.addSubview(sendGiftBtn)
+        view.addSubview(sendHeartBeatBtn)
         view.addSubview(tipLabel)
+    }
+
+    /// 给服务器发送心跳包
+    /// - Returns: 返回
+    @objc func sendHeartBeat() {
+        socket.sendHeartBeat()
     }
     
     /// 发送消息
@@ -30,19 +45,6 @@ class ViewController: UIViewController {
         文本 2
         礼物 3
      */
-    func sendMessage() {
-        // 1.获取消息长度
-        let userInfo = UserInfo.Builder()
-        userInfo.name = "王冲\(arc4random_uniform(10))"
-        userInfo.level = 30
-        userInfo.iconUrl = "https://img.sumeme.com/43/3/1592927031659.png"
-        let msgData = (try! userInfo.build()).data()
-    
-        socket.sendMessage(data: msgData, type: 0)
-        
-        print("\n发送的内容：\(userInfo)\n长度：\(msgData.count)\n类型：\(0)")
-    }
-    
     /// 处理点击事件
     /// - Parameter sender: button
     @objc func click(sender: UIButton) {
@@ -51,13 +53,25 @@ class ViewController: UIViewController {
             if socket.connectServer() {
                 tipLabel.text = "已经连接上服务器"
                 tipLabel.textColor = .green
+                // 连接上服务器后，发送心跳包
+                timer = Timer(fireAt: Date(), interval: 10, target: self, selector: #selector(sendHeartBeat), userInfo: nil, repeats: true)
+                RunLoop.current.add(timer, forMode: .common)
             } else {
                 print("连接失败")
                 tipLabel.text = "连接失败"
                 tipLabel.textColor = .red
             }
         case 102:
-            sendMessage()
+            socket.sendJoinRoom()
+        case 103:
+            socket.sendLeavelRoom()
+        case 104:
+            socket.sendTextMessage(message: "你好啊")
+        case 105:
+            socket.sendGifMessage(giftName: "海洋之心", giftURL: "https://url", giftCount: 2)
+        case 106:
+            // socket.sendHeartBeat()
+            print("")
         default:
             print("无效事件")
         }
@@ -118,8 +132,19 @@ class ViewController: UIViewController {
         button.addTarget(self, action: #selector(click), for: .touchUpInside)
         return button
     }()
+    lazy var sendHeartBeatBtn: UIButton = {
+        let button = UIButton(frame: CGRect(x: self.view.center.x + 10, y: 340, width: 100, height: 40))
+        button.backgroundColor = UIColor.red
+        button.setTitleColor(.white, for: .normal)
+        button.setTitle("发送心跳包", for: .normal)
+        button.layer.cornerRadius = 8
+        button.clipsToBounds = true
+        button.tag = 106
+        button.addTarget(self, action: #selector(click), for: .touchUpInside)
+        return button
+    }()
      lazy var tipLabel: UILabel = {
-         let label = UILabel(frame: CGRect(x: self.view.center.x - 100, y: 340, width: 200, height: 50))
+         let label = UILabel(frame: CGRect(x: self.view.center.x - 100, y: 400, width: 200, height: 50))
          label.textAlignment = .center
          label.text = "没有连接服务器"
          label.layer.cornerRadius = 8
@@ -128,5 +153,11 @@ class ViewController: UIViewController {
          label.backgroundColor = .brown
          return label
      }()
+    
+    deinit {
+        // 定时器销毁
+        timer.invalidate()
+        timer = nil
+    }
 }
 

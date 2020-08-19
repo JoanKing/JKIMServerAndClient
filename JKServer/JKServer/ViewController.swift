@@ -12,15 +12,16 @@ class ViewController: UIViewController {
 
     /// 服务器对象
     lazy var serverManger: ServerManger = ServerManger()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.addSubview(startServer)
         view.addSubview(stopServer)
         view.addSubview(tipLabel)
-        
-        
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        present(ViewController1(), animated: true, completion: nil)
     }
     
     /// 点击事件

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		38319B0B1BB2BE5E65DF1E57 /* Pods_JKServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F8B6C7BAF3A625B9C11DB5B /* Pods_JKServer.framework */; };
 		E211368324D26C1700C51B7D /* Immessage.proto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E211368224D26C1700C51B7D /* Immessage.proto.swift */; };
+		E28A84DD24D3A8DA0093A10E /* JKOCPermenantThread.m in Sources */ = {isa = PBXBuildFile; fileRef = E28A84DB24D3A8DA0093A10E /* JKOCPermenantThread.m */; };
+		E28A84E524D3AC570093A10E /* ViewController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28A84E424D3AC570093A10E /* ViewController1.swift */; };
 		E29C465F24D1997E009A16C0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29C465E24D1997E009A16C0 /* AppDelegate.swift */; };
 		E29C466124D1997E009A16C0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29C466024D1997E009A16C0 /* SceneDelegate.swift */; };
 		E29C466324D1997E009A16C0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29C466224D1997E009A16C0 /* ViewController.swift */; };
@@ -48,6 +50,10 @@
 		7F8B6C7BAF3A625B9C11DB5B /* Pods_JKServer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JKServer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9EE8792D3101405354E91F2 /* Pods-JKServer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JKServer.release.xcconfig"; path = "Target Support Files/Pods-JKServer/Pods-JKServer.release.xcconfig"; sourceTree = "<group>"; };
 		E211368224D26C1700C51B7D /* Immessage.proto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Immessage.proto.swift; sourceTree = "<group>"; };
+		E28A84DB24D3A8DA0093A10E /* JKOCPermenantThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JKOCPermenantThread.m; sourceTree = "<group>"; };
+		E28A84DC24D3A8DA0093A10E /* JKOCPermenantThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JKOCPermenantThread.h; sourceTree = "<group>"; };
+		E28A84E324D3AAAA0093A10E /* JKServer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JKServer-Bridging-Header.h"; sourceTree = "<group>"; };
+		E28A84E424D3AC570093A10E /* ViewController1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController1.swift; sourceTree = "<group>"; };
 		E29C465B24D1997E009A16C0 /* JKServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JKServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E29C465E24D1997E009A16C0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E29C466024D1997E009A16C0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -125,10 +131,12 @@
 				E29C465E24D1997E009A16C0 /* AppDelegate.swift */,
 				E29C466024D1997E009A16C0 /* SceneDelegate.swift */,
 				E29C466224D1997E009A16C0 /* ViewController.swift */,
+				E28A84E424D3AC570093A10E /* ViewController1.swift */,
 				E211368224D26C1700C51B7D /* Immessage.proto.swift */,
 				E29C468F24D19CDC009A16C0 /* Server */,
 				E29C466424D1997E009A16C0 /* Main.storyboard */,
 				E29C466724D19980009A16C0 /* Assets.xcassets */,
+				E28A84E324D3AAAA0093A10E /* JKServer-Bridging-Header.h */,
 				E29C466924D19980009A16C0 /* LaunchScreen.storyboard */,
 				E29C466C24D19980009A16C0 /* Info.plist */,
 			);
@@ -158,6 +166,8 @@
 			children = (
 				E29C469C24D19D00009A16C0 /* ServerManger.swift */,
 				E29C469B24D19D00009A16C0 /* ClientManger.swift */,
+				E28A84DC24D3A8DA0093A10E /* JKOCPermenantThread.h */,
+				E28A84DB24D3A8DA0093A10E /* JKOCPermenantThread.m */,
 				E29C469024D19CF2009A16C0 /* ysocket */,
 			);
 			path = Server;
@@ -368,6 +378,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E29C469624D19CF2009A16C0 /* yudpsocket.c in Sources */,
+				E28A84E524D3AC570093A10E /* ViewController1.swift in Sources */,
+				E28A84DD24D3A8DA0093A10E /* JKOCPermenantThread.m in Sources */,
 				E29C469924D19CF2009A16C0 /* ysocket.swift in Sources */,
 				E29C469E24D19D00009A16C0 /* ServerManger.swift in Sources */,
 				E29C469D24D19D00009A16C0 /* ClientManger.swift in Sources */,
@@ -560,6 +572,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jk.JKServer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "JKServer/JKServer-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -579,6 +592,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jk.JKServer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "JKServer/JKServer-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

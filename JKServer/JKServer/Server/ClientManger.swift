@@ -24,8 +24,9 @@ class ClientManger: NSObject {
     /// 客户端是否已经连接
     var isClientConnected: Bool = false
     /// 是否收到心跳包，默认是没有收到
-    fileprivate var receiveHeartBeat: Bool = false
-    
+    fileprivate var receiveHeartBeat: Bool = true
+    fileprivate var timer: Timer!
+    var thread: JKOCPermenantThread!
     init(tcpClient: TCPClient) {
         self.tcpClient = tcpClient
     }
@@ -36,10 +37,16 @@ extension ClientManger {
     /// 开始读取消息
     func startReadMessage() {
         isClientConnected = true
-        // 心跳包定时器
-        let timer = Timer(fireAt: Date(timeIntervalSinceNow: 10), interval: 10, target: self, selector: #selector(checkHeartBeat), userInfo: nil, repeats: true)
-        RunLoop.current.add(timer, forMode: .default)
         
+        thread = JKOCPermenantThread()
+        thread.executeTask { [weak self] in
+            guard let weakSelf = self else {
+                return
+            }
+            // 心跳包定时器
+            weakSelf.timer = Timer(fireAt: Date(), interval: 10, target: weakSelf, selector: #selector(weakSelf.checkHeartBeat), userInfo: nil, repeats: true)
+            RunLoop.current.add(weakSelf.timer, forMode: .common)
+        }
         
         while true {
             if let lMsg = tcpClient.read(4) {
@@ -77,7 +84,10 @@ extension ClientManger {
                 case 3:
                     print("礼物");
                 case 100:
-                    print("心跳包");
+                    guard let heartMessage = String(data: data, encoding: .utf8) else {
+                        return
+                    }
+                    print("\(heartMessage)")
                     // 收到了心跳包
                     receiveHeartBeat = true
                     // 不需要告诉其他的客户端，所以进行下次的循环
@@ -92,27 +102,33 @@ extension ClientManger {
                     delegate?.sendMsgToClient(totalData)
                 }
             } else {
-                print("客户端断开了链接")
-                isClientConnected = false
-                _ = tcpClient.close()
-                if delegate != nil {
-                    // 把消息转发给其他的客户端
-                    delegate?.removeClient(self)
-                }
+                // print("客户端断开了链接")
+                removeClient()
             }
         }
     }
     
     /// 检查心跳包
     @objc func checkHeartBeat() {
+        print("-----检查心跳包------")
         if !receiveHeartBeat {
-            _ = tcpClient.close()
-            if self.delegate != nil {
-                self.delegate?.removeClient(self)
-            }
+            removeClient()
         } else {
             // 再次去检查心跳包
             receiveHeartBeat = false
+        }
+    }
+    
+    private func removeClient() {
+        thread.stop()
+        isClientConnected = false
+        if self.delegate != nil {
+            self.delegate?.removeClient(self)
+        }
+        _ = tcpClient.close()
+        if timer != nil {
+            timer.invalidate()
+            timer = nil
         }
     }
 }
